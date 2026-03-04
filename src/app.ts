@@ -1,24 +1,38 @@
-import dotenv, { config } from "dotenv";
-
 import express from "express";
-// import mainRouter from "./routes/index.js";
 import cors from "cors";
-// import { env } from "./config/env.js";
+import helmet from "helmet";
+import morgan from "morgan";
 
-dotenv.config();
+import { env } from "./config/env.js";
+import { ok } from "node:assert";
 
-const app = express();
-const PORT = process.env.PORT;
+// import { errorMiddleware } form "./middleware/error.middleware.js"
 
+export const app = express();
+
+app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true,
     credentials: true,
   }),
 );
-app.use(express.json());
-// app.use("/api/v1", mainRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port: ${PORT}`);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+if (env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
 });
+
+app.use((_req, res) => {
+  res.status(404).json({
+    message: "Route not found",
+  });
+});
+
+// app.use(errorMiddleware);
