@@ -8,20 +8,109 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
+  id              String           @id @default(uuid())
+  name            String
+  email           String           @unique
+  passwordHash    String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
-  account   Account? 
+  groupsCreated   Group[]          @relation("GroupCreator")
+  groupMemberships GroupMember[]
+  expensesPaid    Expense[]        @relation("ExpensePayer")
+  expenseSplits   ExpenseSplit[]
+  walletTransactions WalletTransaction[]
+  categories      Category[]
+  refreshTokens   RefreshToken[]
 }
 
-model Account {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @unique
-  balance   Decimal  @default(0.00)
+model Group {
+  id         String        @id @default(uuid())
+  name       String
+  createdBy  String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  creator    User          @relation("GroupCreator", fields: [createdBy], references: [id])
+  members    GroupMember[]
+  expenses   Expense[]
+}
+
+model GroupMember {
+  id       String  @id @default(uuid())
+  groupId  String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model Expense {
+  id        String      @id @default(uuid())
+  groupId   String
+  paidById  String
+  amount    Decimal     @db.Decimal(12, 2)
+  description String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  group     Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  paidBy    User        @relation("ExpensePayer", fields: [paidById], references: [id])
+  splits    ExpenseSplit[]
+}
+
+model ExpenseSplit {
+  id         String   @id @default(uuid())
+  expenseId  String
+  userId     String
+  amountOwed Decimal  @db.Decimal(12, 2)
+
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([expenseId, userId])
+}
+
+model WalletTransaction {
+  id        String   @id @default(uuid())
+  userId    String
+  type      TransactionType
+  amount    Decimal  @db.Decimal(12, 2)
+  note      String?
+  categoryId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+
+  @@unique([userId, name])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
 }
