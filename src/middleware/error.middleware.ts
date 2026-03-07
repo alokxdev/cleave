@@ -3,6 +3,7 @@ import { success, ZodError } from "zod";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { env } from "../config/env.js";
+import { ApiError } from "../utils/ApiError.js";
 
 export const errorMiddleware = (
   err: unknown,
@@ -51,6 +52,13 @@ export const errorMiddleware = (
         message: "Record not found",
       });
     }
+  }
+
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+    });
   }
 
   if (err instanceof Error) {
