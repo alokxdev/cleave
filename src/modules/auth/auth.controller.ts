@@ -4,7 +4,7 @@ import {
   loginUser,
   refreshUserToken,
   logoutUser,
-} from "./auth.services.js";
+} from "./auth.service.js";
 import { sendSuccess } from "../../lib/response.js";
 import { error } from "node:console";
 

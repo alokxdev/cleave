@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { success, ZodError } from "zod";
+import { ZodError } from "zod";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { env } from "../config/env.js";
