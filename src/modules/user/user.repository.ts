@@ -1,10 +1,14 @@
 import { prisma } from "../../db/prisma.js";
+import type { User, Prisma } from "@prisma/client";
 
-import type { User } from "@prisma/client";
-import type { UpdateUserInput } from "./user.schema.js";
-// import type { UpdateUserInput } from "./user.schema.js";
+// interface UpdateUserInput {
+//   username?: string;
+//   firstName?: string;
+//   lastName?: string;
+//   email?: string;
+// }
 
-export const createUser = async (data: User): Promise<User> =>
+export const createUser = async (data: Prisma.UserCreateInput): Promise<User> =>
   prisma.user.create({ data });
 
 export const findUserByEmail = async (email: string): Promise<User | null> =>
@@ -18,12 +22,7 @@ export const findUserByUsername = async (username: string) =>
 
 export const updateUser = async (
   id: string,
-  data: {
-    username?: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-  },
+  data: Prisma.UserUpdateInput,
 ): Promise<User> => prisma.user.update({ where: { id }, data });
 
 export const deleteUser = async (id: string): Promise<User> =>

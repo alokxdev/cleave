@@ -91,12 +91,8 @@ export const loginUser = async ({ email, password }: LoginInput) => {
 };
 
 export const refreshUserToken = async (token: string) => {
-  let payload;
-  try {
-    payload = verifyRefreshToken(token);
-  } catch {
-    throw new ApiError(401, "Invalid Token");
-  }
+  const payload = verifyRefreshToken(token);
+
   const storedToken = await findRefreshToken(token);
 
   if (!storedToken || storedToken.expiresAt < new Date()) {

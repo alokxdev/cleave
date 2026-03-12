@@ -1,9 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import pkg from "jsonwebtoken";
 import { env } from "../config/env.js";
 import { ApiError } from "../utils/ApiError.js";
+
+const { JsonWebTokenError, TokenExpiredError } = pkg;
 
 export const errorMiddleware = (
   err: unknown,

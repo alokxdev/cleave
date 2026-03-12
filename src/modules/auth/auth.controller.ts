@@ -6,7 +6,6 @@ import {
   logoutUser,
 } from "./auth.service.js";
 import { sendSuccess } from "../../lib/response.js";
-import { error } from "node:console";
 
 export const register = async (
   req: Request,
@@ -14,7 +13,7 @@ export const register = async (
   next: NextFunction,
 ) => {
   try {
-    const result = registerUser(req.body);
+    const result = await registerUser(req.body);
     return sendSuccess(res, "User registered successfully", result, 201);
   } catch (error) {
     next(error);
@@ -59,9 +58,9 @@ export const logout = async (
   try {
     const { refreshToken } = req.body;
 
-    const result = await logoutUser(refreshToken);
+    await logoutUser(refreshToken);
 
-    return sendSuccess(res, "Logout successful", result);
+    return sendSuccess(res, "Logout successful");
   } catch (error) {
     next(error);
   }

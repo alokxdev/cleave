@@ -6,7 +6,7 @@ const updateUserSchemaUnrefined = z.object({
     .min(3, "Username must be at least 3 characters")
     .max(30)
     .regex(
-      /^[a-zA-Z0-9_]+&/,
+      /^[a-zA-Z0-9_]+$/,
       "Username can only contain letters, numbers and underscores",
     )
     .optional(),
@@ -40,5 +40,5 @@ export const deleteUserSchema = z.object({
     .min(1, "password is required to confirm account deletion"),
 });
 
-export type UpdateUserInput = z.infer<typeof updateUserSchemaUnrefined>;
+export type UpdateUserInput = z.input<typeof updateUserSchemaUnrefined>;
 export type DeleteUserInput = z.input<typeof deleteUserSchema>;

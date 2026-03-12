@@ -42,6 +42,7 @@ model GroupMember {
   id       String  @id @default(uuid())
   groupId  String
   userId   String
+  role     GroupMemberRole @default(MEMBER)
   joinedAt DateTime @default(now())
 
   group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -115,4 +116,9 @@ model RefreshToken {
 enum TransactionType {
   INCOME
   EXPENSE
+}
+
+enum GroupMemberRole {
+  OWNER
+  MEMBER
 }

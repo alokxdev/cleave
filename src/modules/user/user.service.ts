@@ -7,6 +7,8 @@ import {
 } from "./user.repository.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { comparePassword } from "../../lib/hash.js";
+import type { UpdateUserInput } from "./user.schema.js";
+import type { Prisma } from "@prisma/client";
 
 const sanitizeUser = (user: {
   passwordHash: string;
@@ -32,12 +34,7 @@ export const getCurrentUser = async (userId: string) => {
 
 export const updateCurrentUser = async (
   userId: string,
-  data: {
-    username?: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-  },
+  data: UpdateUserInput,
 ) => {
   const existingUser = await findUserById(userId);
   if (!existingUser) {
@@ -58,7 +55,7 @@ export const updateCurrentUser = async (
     }
   }
 
-  const updatedUser = await updateUser(userId, data);
+  const updatedUser = await updateUser(userId, data as Prisma.UserUpdateInput);
 
   return sanitizeUser(updatedUser);
 };
