@@ -15,5 +15,19 @@ export const updateGroupSchema = z.object({
     .optional(),
 });
 
+export const addMemberSchema = z.object({
+  email: z.string().trim().toLowerCase().pipe(z.email("Invalid email format")),
+});
+
+export const groupParamSchema = z.object({
+  groupId: z.uuid("Invalid group ID"),
+});
+
+export const memberParamSchema = z.object({
+  groupId: z.uuid("Invalid group ID"),
+  userId: z.uuid("Invalid user ID"),
+});
+
 export type CreateGroupInput = z.infer<typeof createGroupSchema>;
 export type updateGroupInput = z.infer<typeof updateGroupSchema>;
+export type addMemberInput = z.infer<typeof addMemberSchema>;
