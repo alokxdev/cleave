@@ -11,8 +11,7 @@ export const updateGroupSchema = z.object({
   name: z
     .string()
     .min(2, "Group name must be at least 2 characters")
-    .max(100, "Group name cannot exceed 100 characters")
-    .optional(),
+    .max(100, "Group name cannot exceed 100 characters"),
 });
 
 export const addMemberSchema = z.object({
@@ -29,5 +28,5 @@ export const memberParamSchema = z.object({
 });
 
 export type CreateGroupInput = z.infer<typeof createGroupSchema>;
-export type updateGroupInput = z.infer<typeof updateGroupSchema>;
-export type addMemberInput = z.infer<typeof addMemberSchema>;
+export type UpdateGroupInput = z.infer<typeof updateGroupSchema>;
+export type AddMemberInput = z.infer<typeof addMemberSchema>;
