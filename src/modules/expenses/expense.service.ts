@@ -7,6 +7,8 @@ import {
 import { requireGroupMember } from "../../utils/groupAuth.js";
 import type { CreateExpenseInput } from "./expense.schema.js";
 import { prisma } from "../../db/prisma.js";
+import { findExpenseById, listGroupExpenses } from "./expense.repository.js";
+import { ApiError } from "../../utils/ApiError.js";
 
 // CREATE EXPENSE maa chua lo apni apni
 
@@ -54,4 +56,22 @@ export const createExpenseService = async (
 
     return expense;
   });
+};
+
+export const getGroupExpenseService = async (
+  groupId: string,
+  userId: string,
+) => {
+  await requireGroupMember(groupId, userId);
+
+  return listGroupExpenses(groupId);
+};
+
+export const getExpenseService = async (expenseId: string, userId: string) => {
+  const expense = await findExpenseById(expenseId);
+  if (!expense) {
+    throw new ApiError(404, "Expense not found");
+  }
+  await requireGroupMember(expense.groupId, userId);
+  return expense;
 };
