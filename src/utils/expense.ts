@@ -27,7 +27,7 @@ export const CalculateEqualSplits = (
 
   return participants.map((userId) => ({
     userId,
-    amount: share,
+    amountOwed: share,
   }));
 };
 
@@ -50,6 +50,6 @@ export const validateExactSplits = (
 
   return splits.map((m) => ({
     userId: m.userId,
-    amount: new Decimal(m.amount),
+    amountOwed: new Decimal(m.amount),
   }));
 };

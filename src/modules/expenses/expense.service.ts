@@ -1,17 +1,57 @@
-import { ApiError } from "../../utils/ApiError.js";
-import { listMembers } from "../group/group.repository.js";
+import { Decimal } from "@prisma/client/runtime/library";
+import {
+  validateExactSplits,
+  validateParticipantsAreMemberOf,
+  CalculateEqualSplits,
+} from "../../utils/expense.js";
+import { requireGroupMember } from "../../utils/groupAuth.js";
+import type { CreateExpenseInput } from "./expense.schema.js";
+import { prisma } from "../../db/prisma.js";
 
-export const validateParticipantsAreMemberOf = async (
+// CREATE EXPENSE maa chua lo apni apni
+
+export const createExpenseService = async (
   groupId: string,
-  userIds: string[],
+  currentUserId: string,
+  data: CreateExpenseInput,
 ) => {
-  const members = await listMembers(groupId);
+  await requireGroupMember(groupId, currentUserId);
 
-  const memberIds = new Set(members.map((m) => m.userId));
+  await requireGroupMember(groupId, data.paidBy);
 
-  for (const userId in userIds) {
-    if (!memberIds.has(userId)) {
-      throw new ApiError(400, `User ${userId} is not a member of this group`);
-    }
+  let splits: { userId: string; amountOwed: Decimal }[];
+
+  if (data.splitType === "EQUAL") {
+    await validateParticipantsAreMemberOf(groupId, data.participants!);
+
+    splits = CalculateEqualSplits(data.amount, data.participants!);
+  } else {
+    await validateParticipantsAreMemberOf(
+      groupId,
+      data.splits!.map((m) => m.userId),
+    );
+
+    splits = validateExactSplits(data.amount, data.splits!);
   }
+
+  return prisma.$transaction(async (tx) => {
+    const expense = await tx.expense.create({
+      data: {
+        groupId,
+        paidById: data.paidBy,
+        amount: new Decimal(data.amount),
+        description: data.description,
+      },
+    });
+
+    await tx.expenseSplit.createMany({
+      data: splits.map((s) => ({
+        expenseId: expense.id,
+        userId: s.userId,
+        amountOwed: s.amountOwed,
+      })),
+    });
+
+    return expense;
+  });
 };
