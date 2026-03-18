@@ -46,8 +46,7 @@ export const updateExpenseParamSchema = z.object({
 });
 
 export const updateExpenseBodySchema = z.object({
-  description: z.string().min(1).max(255).optional(),
-  amount: z.number().positive().optional(),
+  description: z.string().min(1).max(255),
 });
 
 export const expenseParamSchema = z.object({
