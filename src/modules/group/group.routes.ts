@@ -21,10 +21,7 @@ import {
   removeMemberController,
   listMembersController,
 } from "./group.controller.js";
-import {
-  createExpenseBodySchema,
-  createExpenseParamSchema,
-} from "../expenses/expense.schema.js";
+import { createExpenseBodySchema } from "../expenses/expense.schema.js";
 import {
   createExpenseController,
   getGroupExpensesController,
@@ -71,7 +68,7 @@ router.get(
 router.post(
   "/:groupId/expenses",
   validate({
-    params: createExpenseParamSchema,
+    params: groupParamSchema,
     body: createExpenseBodySchema,
   }),
   createExpenseController,
