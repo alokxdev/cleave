@@ -72,7 +72,7 @@ export const deleteCurrentUser = async (
     throw new ApiError(404, "User not found");
   }
 
-  const passwordValid = comparePassword(data.password, user.passwordHash);
+  const passwordValid = await comparePassword(data.password, user.passwordHash);
 
   if (!passwordValid) {
     throw new ApiError(401, "Invalid Password");

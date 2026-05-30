@@ -4,7 +4,8 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from "../../lib/jwt.js";
-import { createUser, findUserByEmail } from "../user/user.repository.js";
+import { findUserByEmail } from "../user/user.repository.js";
+import { prisma } from "../../db/prisma.js";
 import {
   findRefreshToken,
   revokeRefreshToken,
@@ -41,12 +42,22 @@ export const registerUser = async ({
 
   const passwordHash = await hashPassword(password);
 
-  const user = await createUser({
-    username,
-    firstName,
-    lastName,
-    email,
-    passwordHash,
+  const user = await prisma.$transaction(async (tx) => {
+    const createdUser = await tx.user.create({
+      data: {
+        username,
+        firstName,
+        lastName,
+        email,
+        passwordHash,
+      },
+    });
+
+    await tx.wallet.create({
+      data: { userId: createdUser.id },
+    });
+
+    return createdUser;
   });
 
   const { passwordHash: _, ...safeUser } = user;

@@ -29,3 +29,20 @@ export const deleteUser = async (id: string): Promise<User> =>
   prisma.user.delete({
     where: { id },
   });
+
+// Search users by email (partial match)
+export const searchUsersByEmail = async (query: string, excludeUserId: string) =>
+  prisma.user.findMany({
+    where: {
+      email: { contains: query, mode: "insensitive" },
+      id: { not: excludeUserId },
+    },
+    select: {
+      id: true,
+      username: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+    },
+    take: 10,
+  });

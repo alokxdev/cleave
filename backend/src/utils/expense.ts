@@ -11,7 +11,7 @@ export const validateParticipantsAreMemberOf = async (
 
   const memberIds = new Set(members.map((m) => m.userId));
 
-  for (const userId in userIds) {
+  for (const userId of userIds) {
     if (!memberIds.has(userId)) {
       throw new ApiError(400, `User ${userId} is not a member of this group`);
     }

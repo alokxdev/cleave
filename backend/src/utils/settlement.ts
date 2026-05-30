@@ -1,4 +1,4 @@
-import type { Expense, ExpenseSplit } from "@prisma/client";
+import type { Expense, ExpenseSplit, Settlement as SettlementRecord } from "@prisma/client";
 
 type ExpenseWithSplits = Expense & { splits: ExpenseSplit[] };
 
@@ -33,6 +33,26 @@ export const buildBalanceMap = (expenses: ExpenseWithSplits[]): BalanceMap => {
 
       balanceMap.set(userId, balanceMap.get(userId)! - splitAmount);
     }
+  }
+
+  return balanceMap;
+};
+
+export const applySettlementsToBalanceMap = (
+  balanceMap: BalanceMap,
+  settlements: Pick<SettlementRecord, "payerId" | "payeeId" | "amount">[],
+) => {
+  for (const settlement of settlements) {
+    const amount = Number(settlement.amount);
+
+    balanceMap.set(
+      settlement.payerId,
+      (balanceMap.get(settlement.payerId) || 0) + amount,
+    );
+    balanceMap.set(
+      settlement.payeeId,
+      (balanceMap.get(settlement.payeeId) || 0) - amount,
+    );
   }
 
   return balanceMap;

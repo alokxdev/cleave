@@ -64,7 +64,7 @@ export const deleteMe = async (
 
     await deleteCurrentUser(userId, req.body as DeleteUserInput);
 
-    return sendSuccess(res, "User account deleted", undefined, 204);
+    return sendSuccess(res, "User account deleted");
   } catch (error) {
     next(error);
   }
