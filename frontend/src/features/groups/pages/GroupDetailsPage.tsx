@@ -190,15 +190,15 @@ export default function GroupDetailsPage() {
     const payload: CreateExpenseInput =
       data.splitType === "EXACT"
         ? {
-            ...basePayload,
-            splitType: "EXACT",
-            splits: exactSplits,
-          }
+          ...basePayload,
+          splitType: "EXACT",
+          splits: exactSplits,
+        }
         : {
-            ...basePayload,
-            splitType: "EQUAL",
-            participants: data.participants,
-          };
+          ...basePayload,
+          splitType: "EQUAL",
+          participants: data.participants,
+        };
 
     createExpenseMutate(payload, {
       onSuccess: () => {
@@ -386,7 +386,7 @@ export default function GroupDetailsPage() {
           {showAddExpense && (
             <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-lg shadow-blue-100/70 animate-slide-down">
               <h3 className="text-lg font-bold text-blue-950 mb-4">Log a New Expense</h3>
-              
+
               {createExpenseError && (
                 <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
                   {getApiErrorMessage(createExpenseError, "Failed to create expense")}
@@ -556,7 +556,7 @@ export default function GroupDetailsPage() {
                 {getApiErrorMessage(deleteExpenseError, "Failed to delete expense")}
               </div>
             )}
-            
+
             {!expenses || expenses.length === 0 ? (
               <div className="rounded-xl border border-blue-100 bg-white p-8 text-center shadow-sm">
                 <p className="text-sm text-slate-500">No expenses logged yet.</p>
@@ -656,7 +656,7 @@ export default function GroupDetailsPage() {
           {/* Balances / Who owes Whom */}
           <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-bold text-blue-950 mb-4">Group Balances</h3>
-            
+
             {!balances || balances.length === 0 ? (
               <div className="py-4 text-center">
                 <div className="text-2xl mb-1">🎉</div>
@@ -667,7 +667,7 @@ export default function GroupDetailsPage() {
                 {balances.map((balance, index) => {
                   const fromName = memberMap.get(balance.from) || getMemberEmail(balance.from) || "Unknown";
                   const toName = memberMap.get(balance.to) || getMemberEmail(balance.to) || "Unknown";
-                  
+
                   return (
                     <div
                       key={index}
@@ -691,7 +691,7 @@ export default function GroupDetailsPage() {
           <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm space-y-6">
             <div>
               <h3 className="text-lg font-bold text-blue-950 mb-4">Members ({members?.length || 0})</h3>
-              
+
               <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
                 {members?.map((m) => (
                   <div key={m.id} className="flex items-center justify-between text-sm py-1 border-b border-blue-50 last:border-0 pb-2">

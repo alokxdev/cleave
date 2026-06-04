@@ -9,9 +9,18 @@ import GroupsPage from "../../features/groups/pages/GroupsPage";
 import CreateGroupPage from "../../features/groups/pages/CreateGroupPage";
 import GroupDetailsPage from "../../features/groups/pages/GroupDetailsPage";
 import AppLayout from "../layout/AppLayout";
+import { LandingPage } from "../../features/landing";
 
 export const router = createBrowserRouter([
   // -------- Public Routes --------
+  {
+    path: "/welcome",
+    element: (
+      <PublicRoute>
+        <LandingPage />
+      </PublicRoute>
+    ),
+  },
   {
     path: "/login",
     element: (
